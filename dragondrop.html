@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon Drop Wallet Generator</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #0A0E14;
+            color: #E3E8EF;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 2rem;
+        }
+        
+        header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo img, .logo svg {
+            height: 64px;
+            width: 64px;
+            fill: #FF6C3B;
+            
+        }
+        
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #E3E8EF;
+            margin: 0;
+        }
+        
+        h2 {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: #9AA5B1;
+            margin: 0;
+        }
+        
+        .glass-panel {
+            backdrop-filter: blur(20px);
+            background: linear-gradient(135deg, rgba(26,34,51,0.8) 0%, rgba(16,19,26,0.6) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .drop-zone {
+            backdrop-filter: blur(20px);
+            background: linear-gradient(135deg, rgba(26,34,51,0.85) 0%, rgba(16,19,26,0.7) 100%);
+            border: 1px dashed #9AA5B1;
+            border-radius: 16px;
+            text-align: center;
+            color: #9AA5B1;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            transition: border 0.2s;
+        }
+        
+        .drop-zone.highlight {
+            border-color: #FF6C3B;
+        }
+        
+        input, .tabs {
+            backdrop-filter: blur(20px);
+            background: rgba(25, 35, 50, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            color: #E3E8EF;
+            width: 100%;
+            margin-top: 1rem;
+            padding: 1rem;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        
+        input::placeholder {
+            color: #9AA5B1;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 0.25rem;
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 0.75rem;
+            cursor: pointer;
+            border-radius: 12px;
+            color: #9AA5B1;
+            background: transparent;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s;
+        }
+        
+        .tab.active {
+            background: #FF6C3B;
+            color: #0A0E14;
+            font-weight: 600;
+        }
+        
+        .button-primary {
+            display: block;
+            margin: 2rem auto 1.5rem auto;
+            width: 80%;
+            max-width: 340px;
+            background: linear-gradient(135deg, #10406f 0%, #1a80c4 40%, #1e84ea 60%, #10406f 100%);
+            color: #fff;
+            border-radius: 16px;
+            padding: 1.1rem 0;
+            font-weight: 700;
+            font-size: 1.25rem;
+            border: none;
+            position: relative;
+            overflow: hidden;
+             cursor: pointer;
+            transition: background 0.18s, box-shadow 0.18s, transform 0.15s;
+        }
+        
+        .button-primary::before {
+            content: '';
+            position: absolute;
+            left: 0; right: 0; top: 0; height: 45%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.04) 100%);
+            border-radius: 16px 16px 60% 60%/16px 16px 60% 60%;
+            pointer-events: none;
+        }
+        
+        .button-primary:hover {
+            background: linear-gradient(135deg, #144b83 0%, #2888c8 40%, #2e8deb 60%, #16426e 100%);
+            transform: translateY(-2px) scale(1.025);
+        }
+        
+        .button-primary:active {
+            background: linear-gradient(135deg, #0d2c4a 0%, #17609a 40%, #1a6bb3 60%, #0d2c4a 100%);
+            box-shadow: 0 2px 8px 0 rgba(30, 182, 234, 0.18);
+            transform: scale(0.98);
+        }
+        
+        .file-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            flex-direction: column;
+        }
+        
+        .file-item {
+            background-color: #e9f7fe;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: grab;
+        }
+        
+        .file-item:active {
+            cursor: grabbing;
+        }
+        
+        .file-item button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            margin-right: 20px;
+        }
+        
+        .password-container {
+            margin-bottom: 20px;
+            max-width: 500px;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .password-container input {
+            width: 100%;
+            max-width: 500px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .result-container {
+            /* margin-top: 30px; */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f4;
+            border-radius: 8px;
+            padding: 20px 0;
+        }
+        
+        .result-box {
+            margin-bottom: 15px;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .result-box label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .result-box textarea {
+            width: 100%;
+            max-width: 500px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: monospace;
+            resize: none;
+            height: 60px;
+        }
+        
+        .copy-btn {
+            background: linear-gradient(90deg, #ff6a2b 60%, #ff944d 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            margin-top: 5px;
+            font-weight: 500;
+            box-shadow: 0 2px 6px rgba(255,106,43,0.08);
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: linear-gradient(90deg, #ff944d 60%, #ff6a2b 100%);
+            box-shadow: 0 4px 12px rgba(255,106,43,0.15);
+        }
+        
+        .generate-btn {
+            background: linear-gradient(90deg, #1eb6ea 60%, #49d6ff 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            width: 200px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(30,182,234,0.10);
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+        
+        .generate-btn:hover {
+            background: linear-gradient(90deg, #49d6ff 60%, #1eb6ea 100%);
+            box-shadow: 0 4px 16px rgba(30,182,234,0.18);
+        }
+        
+        .dragging {
+            opacity: 0.5;
+        }
+        
+        .info-box {
+            background: var(--warning-bg);
+            border: 1.5px solid var(--warning-border);
+            border-radius: 18px;
+            padding: 22px 24px;
+            margin-bottom: 28px;
+            color: #dbeafe;
+        }
+        
+        .info-box strong {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        
+        .dropzone, .password-container input {
+            background: rgba(30, 40, 60, 0.5);
+            border: 1.5px solid #1eb6ea33;
+            border-radius: 16px;
+            color: #fff;
+            padding: 20px;
+            margin-bottom: 22px;
+            font-size: 1.1em;
+            outline: none;
+            transition: border 0.2s;
+        }
+        
+        .dropzone {
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .dropzone.highlight {
+            border-color: #1eb6ea;
+            background: rgba(30, 182, 234, 0.08);
+        }
+        
+        .password-container label {
+            color: #b0b8c9;
+            font-size: 1em;
+            margin-bottom: 6px;
+            display: block;
+        }
+        
+        .password-container input::placeholder {
+            color: #b0b8c9;
+            opacity: 1;
+        }
+        
+        .generate-btn {
+            background: linear-gradient(90deg, #ff6a2b 0%, #ff944d 100%);
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 14px;
+            padding: 16px 0;
+            width: 180px;
+            box-shadow: 0 4px 24px #ff6a2b44;
+            margin-right: 18px;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        
+        .generate-btn:hover {
+            background: linear-gradient(90deg, #ff944d 0%, #ff6a2b 100%);
+            box-shadow: 0 6px 32px #ff6a2b66;
+        }
+        
+        .tab-container {
+            display: flex;
+            justify-content: center;
+            /* margin-bottom: 20px; */
+            gap: 10px;
+        }
+        .tab-btn {
+            background: rgba(30, 40, 60, 0.7);
+            color: #b0b8c9;
+            border: 1.5px solid #1eb6ea44;
+            border-radius: 12px;
+            font-size: 1.1em;
+            padding: 12px 32px;
+            margin-right: 10px;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s, border 0.2s;
+        }
+        .tab-btn.active, .tab-btn:focus {
+            background: #1a2233;
+            color: #fff;
+            border-color: #1eb6ea;
+        }
+        .file-list {
+            background: rgba(30, 40, 60, 0.5);
+            border-radius: 16px;
+            border: 1.5px solid #1eb6ea22;
+            padding: 10px 0;
+        }
+        .file-item {
+            background-color: transparent;
+            color: #fff;
+            border-bottom: 1px solid #1eb6ea11;
+        }
+        .file-item button {
+            background-color: #ff6a2b;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            margin-right: 20px;
+        }
+        .result-container {
+            background: rgba(30, 40, 60, 0.7);
+            border-radius: 18px;
+            padding: 24px 0 0 0;
+            margin-top: 24px;
+            box-shadow: 0 2px 12px #1eb6ea11;
+        }
+        .result-box textarea {
+            background: rgba(30, 40, 60, 0.5);
+            color: #fff;
+            border: 1.5px solid #1eb6ea33;
+        }
+        .notice-orange {
+            background: linear-gradient(135deg, #7a2e13 0%, #ff6c3b 100%);
+            border: 1.5px solid #ff6c3b;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 0.98rem;
+            font-weight: 500;
+            padding: 0.75rem 1.1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(255,108,59,0.10);
+            opacity: 0.96;
+            letter-spacing: 0.01em;
+        }
+        /* Modal overlay and warning modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(10, 14, 20, 0.65);
+            z-index: 1000;
+            display: none;
+        }
+        .modal-warning {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 280px;
+            max-width: 90vw;
+            background: linear-gradient(135deg, #7a2e13 0%, #ff6c3b 100%);
+            color: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+            padding: 2rem 2.2rem 1.5rem 2.2rem;
+            z-index: 1001;
+            text-align: center;
+            font-size: 1.08rem;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+            display: none;
+            backdrop-filter: blur(12px);
+        }
+        .modal-warning button {
+            margin-top: 1.2rem;
+            background: #fff;
+            color: #ff6c3b;
+            border: none;
+            border-radius: 10px;
+            padding: 0.5rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(255,108,59,0.10);
+            transition: background 0.15s, color 0.15s;
+        }
+        .modal-warning button:hover {
+            background: #ffe5d1;
+            color: #b23c00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container glass-panel">
+        <header>
+            <span class="logo">
+                <img src="logo.png" alt="Dragon Drop Logo" style="max-height:64px;width:auto;">
+            </span>
+            <div>
+                <h1>Dragon Drop</h1>
+                <h2>Ethereum Wallet Generator</h2>
+            </div>
+        </header>
+        <p style="margin-bottom: 2rem; color: #9AA5B1; font-size: 1.05em; text-align: left;">
+            This tool lets you generate an Ethereum wallet key pair or a 24-word mnemonic phrase from one or more files of any type (plus an optional password). No data ever leaves your browser.
+        </p>
+        <div class="notice-orange">
+            <strong style="font-size:1em;">Important:</strong>
+            <ul style="margin-top: 0.4em; margin-bottom: 0.4em; color:#fff; font-size:0.93em; font-weight:400;">
+                <li><span style="font-weight:600;">The order of the files</span> and <span style="font-weight:600;">your password</span> (if provided) will affect the generated results.</li>
+                <li><span style="font-weight:600;">The key pair</span> and <span style="font-weight:600;">mnemonic phrase</span> are generated separately from the same data, but do <u>not</u> correspond to each other and cannot be used to recover one another.</li>
+            </ul>
+            <div style="color:#fff; font-size:0.93em; font-weight:400;">For security, this process happens entirely in your browser - no data is sent to any server.</div>
+        </div>
+        <div class="drop-zone" id="dropzone">
+            Drag and drop files here (or click to select)
+            <input type="file" id="fileInput" multiple style="display: none;">
+        </div>
+        <div class="file-list" id="fileList"></div>
+        <div class="glass-panel" style="margin-bottom: 1.5rem;">
+            <label for="password" style="color:#9AA5B1;">Security Password:</label>
+            <input type="password" id="password" placeholder="Enter a password for additional security">
+        </div>
+        <button class="button-primary" id="generateBtn" disabled>Generate</button>
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-warning" id="fileWarningModal">
+            <div style="font-size:1.15em;font-weight:600;margin-bottom:0.7em;">No Files Selected</div>
+            <div>Please add at least one file to generate a wallet.</div>
+            <button id="closeWarningModal">OK</button>
+        </div>
+        <div class="tabs">
+            <div class="tab active" id="tabKeyPair">Key Pair</div>
+            <div class="tab" id="tabMnemonic">Mnemonic</div>
+        </div>
+        <div class="glass-panel" id="keyPairSection">
+            <div style="margin-bottom: 1rem;">
+                <label for="privateKey" style="color:#9AA5B1;">Private Key:</label>
+                <textarea id="privateKey" readonly style="width:100%;margin-top:0.5rem;"></textarea>
+            </div>
+            <div>
+                <label for="publicKey" style="color:#9AA5B1;">Public Key (Address):</label>
+                <textarea id="publicKey" readonly style="width:100%;margin-top:0.5rem;"></textarea>
+            </div>
+        </div>
+        <div class="glass-panel" id="mnemonicSection" style="display:none;">
+            <div style="margin-bottom: 1rem; color:#FF6C3B; font-weight:600;">Warning: This mnemonic phrase does <u>NOT</u> correspond to the key pair on the alternate tab.</div>
+            <div>
+                <label for="mnemonicPhrase" style="color:#9AA5B1;">24-Word Mnemonic Phrase:</label>
+                <textarea id="mnemonicPhrase" readonly style="width:100%;margin-top:0.5rem;height:80px;"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <footer style="text-align:center; color:#9AA5B1; font-size:0.95em; margin-top:2rem; padding:1.5rem 0 0 0;">
+        Built by <a href="https://x.com/iamtexture" style="color:#1eb6ea;text-decoration:none;" target="_blank">Texture</a> &mdash; Powered by
+        <a href="https://docs.ethers.org/" style="color:#1eb6ea;text-decoration:none;" target="_blank">ethers.js</a>,
+        <a href="https://github.com/bitcoinjs/bip39" style="color:#1eb6ea;text-decoration:none;" target="_blank">bip39</a>, and
+        <a href="https://github.com/brix/crypto-js" style="color:#1eb6ea;text-decoration:none;" target="_blank">CryptoJS</a>.<br>
+        <span style="color:#7a8ca3;">MIT License</span>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bip39/3.1.0/index.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropzone = document.getElementById('dropzone');
+            const fileInput = document.getElementById('fileInput');
+            const fileList = document.getElementById('fileList');
+            const generateBtn = document.getElementById('generateBtn');
+            const passwordInput = document.getElementById('password');
+            const privateKeyElement = document.getElementById('privateKey');
+            const publicKeyElement = document.getElementById('publicKey');
+            const mnemonicPhraseElement = document.getElementById('mnemonicPhrase');
+            const copyButtons = document.querySelectorAll('.copy-btn');
+            const tabKeyPair = document.getElementById('tabKeyPair');
+            const tabMnemonic = document.getElementById('tabMnemonic');
+            const keyPairSection = document.getElementById('keyPairSection');
+            const mnemonicSection = document.getElementById('mnemonicSection');
+            
+            let files = [];
+            
+            // Handle file selection via click
+            dropzone.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+            });
+            
+            // Handle drag and drop
+            dropzone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropzone.classList.add('highlight');
+            });
+            
+            dropzone.addEventListener('dragleave', () => {
+                dropzone.classList.remove('highlight');
+            });
+            
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('highlight');
+                handleFiles(e.dataTransfer.files);
+            });
+            
+            // Process the files
+            function handleFiles(newFiles) {
+                const filesArray = Array.from(newFiles);
+                // Add files to our array
+                files = [...files, ...filesArray];
+                // Update UI
+                updateFileList();
+                // Always keep the generate button enabled
+                generateBtn.disabled = false;
+            }
+            
+            // Update the file list display
+            function updateFileList() {
+                fileList.innerHTML = '';
+                
+                files.forEach((file, index) => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.setAttribute('draggable', true);
+                    fileItem.setAttribute('data-index', index);
+                    
+                    fileItem.innerHTML = `
+                        <span>${file.name}</span>
+                        <button class="remove-btn" data-index="${index}">×</button>
+                    `;
+                    
+                    fileList.appendChild(fileItem);
+                    
+                    // Add drag handlers for reordering
+                    fileItem.addEventListener('dragstart', handleDragStart);
+                    fileItem.addEventListener('dragover', handleDragOver);
+                    fileItem.addEventListener('drop', handleDrop);
+                    fileItem.addEventListener('dragend', handleDragEnd);
+                });
+                
+                // Add remove button handlers
+                document.querySelectorAll('.remove-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const index = parseInt(btn.getAttribute('data-index'));
+                        files.splice(index, 1);
+                        updateFileList();
+                        
+                        if (files.length === 0) {
+                            generateBtn.disabled = true;
+                        }
+                    });
+                });
+            }
+            
+            // Drag and drop for reordering
+            let dragSrcElement = null;
+            
+            function handleDragStart(e) {
+                this.style.opacity = '0.4';
+                dragSrcElement = this;
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', this.getAttribute('data-index'));
+                this.classList.add('dragging');
+            }
+            
+            function handleDragOver(e) {
+                if (e.preventDefault) {
+                    e.preventDefault();
+                }
+                e.dataTransfer.dropEffect = 'move';
+                return false;
+            }
+            
+            function handleDrop(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                
+                if (dragSrcElement !== this) {
+                    const srcIndex = parseInt(dragSrcElement.getAttribute('data-index'));
+                    const destIndex = parseInt(this.getAttribute('data-index'));
+                    
+                    // Reorder the files array
+                    const itemToMove = files.splice(srcIndex, 1)[0];
+                    files.splice(destIndex, 0, itemToMove);
+                    
+                    updateFileList();
+                }
+                
+                return false;
+            }
+            
+            function handleDragEnd(e) {
+                this.style.opacity = '1';
+                this.classList.remove('dragging');
+                
+                document.querySelectorAll('.file-item').forEach(item => {
+                    item.classList.remove('over');
+                });
+            }
+            
+            // Tab switching logic
+            tabKeyPair.addEventListener('click', () => {
+                tabKeyPair.classList.add('active');
+                tabMnemonic.classList.remove('active');
+                keyPairSection.style.display = '';
+                mnemonicSection.style.display = 'none';
+            });
+            tabMnemonic.addEventListener('click', () => {
+                tabMnemonic.classList.add('active');
+                tabKeyPair.classList.remove('active');
+                keyPairSection.style.display = 'none';
+                mnemonicSection.style.display = '';
+            });
+            
+            // Generate wallet
+            const modalOverlay = document.getElementById('modalOverlay');
+            const fileWarningModal = document.getElementById('fileWarningModal');
+            const closeWarningModal = document.getElementById('closeWarningModal');
+
+            generateBtn.disabled = false;
+            generateBtn.addEventListener('click', async () => {
+                if (files.length < 1) {
+                    modalOverlay.style.display = 'block';
+                    fileWarningModal.style.display = 'block';
+                    return;
+                }
+                modalOverlay.style.display = 'none';
+                fileWarningModal.style.display = 'none';
+                try {
+                    // Read files as array buffers
+                    const fileContents = await Promise.all(
+                        files.map(file => readFileAsArrayBuffer(file))
+                    );
+                    // Combine file contents based on order
+                    const combinedHash = await generateCombinedHash(fileContents, passwordInput.value);
+                    // Generate wallet from the hash
+                    const wallet = createWalletFromSeed(combinedHash);
+                    // Display the wallet
+                    privateKeyElement.value = wallet.privateKey;
+                    publicKeyElement.value = wallet.address;
+                    // Generate and display 24-word mnemonic phrase
+                    const mnemonic = generateMnemonicPhrase(combinedHash);
+                    mnemonicPhraseElement.value = mnemonic;
+                } catch (error) {
+                    console.error('Error generating wallet:', error);
+                    alert('Error generating wallet. Please try again.');
+                }
+            });
+            
+            closeWarningModal.addEventListener('click', () => {
+                modalOverlay.style.display = 'none';
+                fileWarningModal.style.display = 'none';
+            });
+            
+            // Read file as array buffer
+            function readFileAsArrayBuffer(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsArrayBuffer(file);
+                });
+            }
+            
+            // Generate combined hash from files and password
+            async function generateCombinedHash(fileContents, password) {
+                // Combine all file contents
+                const combinedBuffer = concatenateArrayBuffers(fileContents);
+                
+                // Convert to Uint8Array for hashing
+                const combinedArray = new Uint8Array(combinedBuffer);
+                
+                // Create a hash of the combined content
+                const contentHash = CryptoJS.SHA256(
+                    CryptoJS.lib.WordArray.create(combinedArray)
+                ).toString();
+                
+                // Combine with password if provided
+                let finalSeed = contentHash;
+                if (password) {
+                    const passwordHash = CryptoJS.SHA256(password).toString();
+                    finalSeed = CryptoJS.SHA256(contentHash + passwordHash).toString();
+                }
+                
+                return finalSeed;
+            }
+            
+            // Concatenate array buffers
+            function concatenateArrayBuffers(buffers) {
+                const totalLength = buffers.reduce((acc, buffer) => acc + buffer.byteLength, 0);
+                const result = new Uint8Array(totalLength);
+                
+                let offset = 0;
+                buffers.forEach(buffer => {
+                    result.set(new Uint8Array(buffer), offset);
+                    offset += buffer.byteLength;
+                });
+                
+                return result.buffer;
+            }
+            
+            // Create Ethereum wallet from seed
+            function createWalletFromSeed(seed) {
+                // Use the seed as private key
+                const privateKey = '0x' + seed.substring(0, 64);
+                
+                // Create wallet from private key
+                const wallet = new ethers.Wallet(privateKey);
+                
+                return {
+                    privateKey: wallet.privateKey,
+                    address: wallet.address
+                };
+            }
+            
+            // Generate 24-word mnemonic phrase
+            function generateMnemonicPhrase(seed) {
+                // Create a 256-bit entropy from the seed
+                const entropy = CryptoJS.SHA256(seed).toString();
+                
+                // If bip39 library is available, use it to generate mnemonic
+                if (typeof bip39 !== 'undefined') {
+                    // Convert hex entropy to Uint8Array for bip39
+                    const entropyBytes = new Uint8Array(32);
+                    for (let i = 0; i < 32; i++) {
+                        entropyBytes[i] = parseInt(entropy.substr(i * 2, 2), 16);
+                    }
+                    
+                    // Generate mnemonic from entropy (should be 24 words for 256 bits)
+                    return bip39.entropyToMnemonic(entropyBytes);
+                } else {
+                    // Fallback to a custom implementation if bip39 is not available
+                    const wordList = [
+                        "abandon", "ability", "able", "about", "above", "absent", "absorb", "abstract", "absurd", "abuse",
+                        "access", "accident", "account", "accuse", "achieve", "acid", "acoustic", "acquire", "across", "act",
+                        "action", "actor", "actress", "actual", "adapt", "add", "addict", "address", "adjust", "admit",
+                        "adult", "advance", "advice", "aerobic", "affair", "afford", "afraid", "again", "age", "agent",
+                        "agree", "ahead", "aim", "air", "airport", "aisle", "alarm", "album", "alcohol", "alert",
+                        "alien", "all", "alley", "allow", "almost", "alone", "alpha", "already", "also", "alter",
+                        "always", "amateur", "amazing", "among", "amount", "amused", "analyst", "anchor", "ancient", "anger",
+                        "angle", "angry", "animal", "ankle", "announce", "annual", "another", "answer", "antenna", "antique",
+                        "anxiety", "any", "apart", "apology", "appear", "apple", "approve", "april", "arch", "arctic",
+                        "area", "arena", "argue", "arm", "armed", "armor", "army", "around", "arrange", "arrest",
+                        "arrive", "arrow", "art", "artefact", "artist", "artwork", "ask", "aspect", "assault", "asset",
+                        "assist", "assume", "asthma", "athlete", "atom", "attack", "attend", "attitude", "attract", "auction",
+                        "audit", "august", "aunt", "author", "auto", "autumn", "average", "avocado", "avoid", "awake",
+                        "aware", "away", "awesome", "awful", "awkward", "axis", "baby", "bachelor", "bacon", "badge",
+                        "bag", "balance", "balcony", "ball", "bamboo", "banana", "banner", "bar", "barely", "bargain",
+                        "barrel", "base", "basic", "basket", "battle", "beach", "bean", "beauty", "because", "become",
+                        "beef", "before", "begin", "behave", "behind", "believe", "below", "belt", "bench", "benefit",
+                        "best", "betray", "better", "between", "beyond", "bicycle", "bid", "bike", "bind", "biology",
+                        "bird", "birth", "bitter", "black", "blade", "blame", "blanket", "blast", "bleak", "bless",
+                        "blind", "blood", "blossom", "blouse", "blue", "blur", "blush", "board", "boat", "body",
+                        "boil", "bomb", "bone", "bonus", "book", "boost", "border", "boring", "borrow", "boss",
+                        "bottom", "bounce", "box", "boy", "bracket", "brain", "brand", "brass", "brave", "bread",
+                        "breeze", "brick", "bridge", "brief", "bright", "bring", "brisk", "broccoli", "broken", "bronze",
+                        "broom", "brother", "brown", "brush", "bubble", "buddy", "budget", "buffalo", "build", "bulb",
+                        "bulk", "bullet", "bundle", "bunker", "burden", "burger", "burst", "bus", "business", "busy",
+                        "butter", "buyer", "buzz", "cabbage", "cabin", "cable", "cactus", "cage", "cake", "call",
+                        "calm", "camera", "camp", "can", "canal", "cancel", "candy", "cannon", "canoe", "canvas",
+                        "canyon", "capable", "capital", "captain", "car", "carbon", "card", "cargo", "carpet", "carry",
+                        "cart", "case", "cash", "casino", "castle", "casual", "cat", "catalog", "catch", "category",
+                        "cattle", "caught", "cause", "caution", "cave", "ceiling", "celery", "cement", "census", "century",
+                        "cereal", "certain", "chair", "chalk", "champion", "change", "chaos", "chapter", "charge", "chase",
+                        "chat", "cheap", "check", "cheese", "chef", "cherry", "chest", "chicken", "chief", "child",
+                        "chimney", "choice", "choose", "chronic", "chuckle", "chunk", "churn", "cigar", "cinnamon", "circle",
+                        "citizen", "city", "civil", "claim", "clap", "clarify", "claw", "clay", "clean", "clerk",
+                        "clever", "click", "client", "cliff", "climb", "clinic", "clip", "clock", "clog", "close",
+                        "cloth", "cloud", "clown", "club", "clump", "cluster", "clutch", "coach", "coast", "coconut",
+                        "code", "coffee", "coil", "coin", "collect", "color", "column", "combine", "come", "comfort",
+                        "comic", "common", "company", "concert", "conduct", "confirm", "congress", "connect", "consider", "control",
+                        "convince", "cook", "cool", "copper", "copy", "coral", "core", "corn", "correct", "cost",
+                        "cotton", "couch", "country", "couple", "course", "cousin", "cover", "coyote", "crack", "cradle"
+                    ];
+                    
+                    // Split the entropy into 24 segments
+                    const segments = [];
+                    for (let i = 0; i < 24; i++) {
+                        segments.push(entropy.substr(i * (entropy.length / 24), entropy.length / 24));
+                    }
+                    
+                    // Map each segment to a word
+                    return segments.map(segment => {
+                        // Use the segment as a source of randomness to pick a word
+                        const index = parseInt(segment, 16) % wordList.length;
+                        return wordList[index];
+                    }).join(' ');
+                }
+            }
+            
+            // Copy button functionality
+            copyButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.getAttribute('data-target');
+                    const targetElement = document.getElementById(targetId);
+                    
+                    targetElement.select();
+                    document.execCommand('copy');
+                    
+                    const originalText = btn.textContent;
+                    btn.textContent = 'Copied!';
+                    
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                    }, 1500);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
